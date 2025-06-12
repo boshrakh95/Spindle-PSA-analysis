@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+import statsmodels.api as sm
 
 # Configuration
 groups = ['NT1', 'NT2', 'IHobjective', 'IHsubjective', 'Controls']
@@ -9,6 +10,9 @@ detectors = ['MARTIN', 'SUMO']
 variable_of_interest = 'total_N2_density_ROI_C3C4'
 data_folder = '/Users/boshra/Desktop/CEAMS internship/Samantha_reports/'
 destination_folder = data_folder
+
+# Create destination folder if it doesn't exist
+os.makedirs(destination_folder, exist_ok=True)
 
 def load_data(group, detector):
     """
@@ -32,6 +36,7 @@ def load_data(group, detector):
 def process_and_plot(group):
     """
     Process data and plot the correlation between Martin and SUMO for a given group.
+    Save the plot as a PDF in the destination folder.
 
     Parameters:
     - group: The participant group for which to process and plot data.
@@ -48,10 +53,22 @@ def process_and_plot(group):
         # Merge the data on the 'filename' column
         df_merged = pd.merge(df_martin, df_sumo, on='filename', suffixes=('_Martin', '_SUMO'))
 
-        # Plot the correlation
+        # Prepare data for regression
+        X = df_merged[f'{variable_of_interest}_Martin']
+        y = df_merged[f'{variable_of_interest}_SUMO']
+        X = sm.add_constant(X)  # Adds a constant term to the predictor
+
+        # Fit linear regression model
+        model = sm.OLS(y, X).fit()
+
+        # Get R² and p-value
+        r_squared = model.rsquared
+        p_value = model.pvalues[1]
+
+        # Plot the correlation with regression line
         plt.figure(figsize=(10, 6))
-        sns.scatterplot(data=df_merged, x=f'{variable_of_interest}_Martin', y=f'{variable_of_interest}_SUMO')
-        plt.title(f'Correlation between Martin and SUMO for {group}')
+        sns.regplot(x=f'{variable_of_interest}_Martin', y=f'{variable_of_interest}_SUMO', data=df_merged)
+        plt.title(f'Correlation between Martin and SUMO for {group}\nR² = {r_squared:.2f}, p-value = {p_value:.2e}')
         plt.xlabel('Martin ' + variable_of_interest)
         plt.ylabel('SUMO ' + variable_of_interest)
         plt.grid(True)
