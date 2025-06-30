@@ -9,7 +9,7 @@ import os
 # Configuration
 variable_of_interest = 'total_N2_density_ROI_C3C4'
 data_folder = '/Users/boshra/Desktop/CEAMS internship/Samantha_reports/new_reports_controls'
-destination_folder = os.path.join(data_folder, 'outliers')
+destination_folder = os.path.join(data_folder, 'manual_outliers')
 os.makedirs(destination_folder, exist_ok=True)
 
 # Define detectors and thresholds as variables that can be easily modified
