@@ -1,6 +1,6 @@
 # Script for identifying outliers in control group data based on specified thresholds for pairs of detectors.
 # Specify the detectors and their thresholds for outlier detection
-# This script works with visually selected thresholds. Refer to outlier_detection_automatic.py for automatic detection ...
+# This script works with visually selected thresholds. Refer to outlier_detection_automatic_dist_reg_line.py for automatic detection ...
 # based on the distance from the regression line.
 
 import pandas as pd
