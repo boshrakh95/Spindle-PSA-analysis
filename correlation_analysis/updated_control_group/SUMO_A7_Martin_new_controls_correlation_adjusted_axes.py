@@ -276,4 +276,14 @@ def process_and_plot():
 process_and_plot()
 
 
+# I used this script to generate correlation plots. Based on the identity line, I visually detected some
+# outlier subjects. I need a script to identify the filenames of these outliers. So for each pair of
+# detectors, I want to specify a threshold  and based on that, the script gives me the filenames
+# (I want filenames for both detectors). For example for the pair of SUMO and Martin, I say that those subjects
+# with 'total_N2_density_ROI_C3C4' higher than 10 detected by SUMO and lower than 3 detected by Martin are outliers
+# and the script identifies the indexes of the merged dataframe where those happen, and gives me the
+# filenames of these subjects (both SUMO and Martin filenames, they are the same but might have different endings).
+# I want the name of the detectors be two variables so that I can easily change them. Also since I don't have the
+# sorted merged dataframe saved, I want to have the loading and processing part in the script as well.
+
 
