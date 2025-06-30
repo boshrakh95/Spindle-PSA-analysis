@@ -8,7 +8,7 @@ import numpy as np
 # Configuration
 variable_of_interest = 'total_N2_density_ROI_C3C4'
 data_folder = '/Users/boshra/Desktop/CEAMS internship/Samantha_reports/new_reports_controls'
-destination_folder = os.path.join(data_folder, 'automatic_outliers')
+destination_folder = os.path.join(data_folder, 'automatic_outliers_regression_line')
 distance_threshold = 1.5  # Threshold for outlier detection based on Euclidean distance
 
 os.makedirs(destination_folder, exist_ok=True)
