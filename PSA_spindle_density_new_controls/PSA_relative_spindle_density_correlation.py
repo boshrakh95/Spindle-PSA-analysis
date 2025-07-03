@@ -6,8 +6,10 @@ import statsmodels.api as sm
 
 # Configuration
 variable_of_interest = 'total_N2_density_ROI_C3C4'
-frequency_band_column = 'total_N2_act_rel_ROI_C3C4_8_12'
-band_name = 'alpha'
+frequency_band_column = 'total_N2_act_rel_ROI_C3C4_11_16'
+# frequency_band_column = 'total_N2_act_rel_ROI_C3C4_8_12'
+band_name = 'Sigma'
+# band_name = 'Alpha'
 data_folder = '/Users/boshra/Desktop/CEAMS internship/Samantha_reports/new_reports_controls'
 destination_folder = os.path.join(data_folder, 'plots')
 show_regression = True
@@ -104,12 +106,12 @@ def process_and_plot():
             model = sm.OLS(y, X).fit()
             r_squared = model.rsquared
             p_value = model.pvalues[1]
-            sns.scatterplot(x=frequency_band_column, y='SUMO_value', hue='control_group', data=df_merged, palette={'original_controls': '#4D71A3', 'new_controls': '#FFB347'}, alpha=0.7)
+            sns.scatterplot(x=frequency_band_column, y='SUMO_value', data=df_merged, color='#4D71A3', alpha=0.7)
             sns.regplot(x=frequency_band_column, y='SUMO_value', data=df_merged, color='#2E7D32', label=f'All data: R²={r_squared:.2f}, p={p_value:.2e}')
             plt.legend()
         else:
-            sns.scatterplot(x=frequency_band_column, y='SUMO_value', hue='control_group', data=df_merged, palette={'original_controls': '#4D71A3', 'new_controls': '#FFB347'}, alpha=0.7)
-        plt.title(f'{band_name} Power vs SUMO N2 Density')
+            sns.scatterplot(x=frequency_band_column, y='SUMO_value', data=df_merged, color='#4D71A3', alpha=0.7)
+        plt.title(f'{band_name} Relative Power vs SUMO N2 Density')
         plt.xlabel(f'{band_name} Power')
         plt.ylabel('SUMO N2 Density')
         plt.grid(True)
@@ -128,7 +130,7 @@ def process_and_plot():
             plt.legend()
         else:
             sns.scatterplot(x=frequency_band_column, y='A7_value', data=df_merged, color='#4D71A3', alpha=0.7)
-        plt.title(f'{band_name} Power vs A7 N2 Density')
+        plt.title(f'{band_name} Relative Power vs A7 N2 Density')
         plt.xlabel(f'{band_name} Power')
         plt.ylabel('A7 N2 Density')
         plt.grid(True)
@@ -147,14 +149,14 @@ def process_and_plot():
             plt.legend()
         else:
             sns.scatterplot(x=frequency_band_column, y='Martin_value', data=df_merged, color='#4D71A3', alpha=0.7)
-        plt.title(f'{band_name} Power vs Martin N2 Density')
+        plt.title(f'{band_name} Relative Power vs Martin N2 Density')
         plt.xlabel(f'{band_name} Power')
         plt.ylabel('Martin N2 Density')
         plt.grid(True)
 
         plt.tight_layout()
 
-        plot_filename = os.path.join(destination_folder, f'correlation_{band_name.lower()}_power_n2_density.pdf')
+        plot_filename = os.path.join(destination_folder, f'correlation_{band_name.lower()}_rel_power_n2_density.pdf')
         plt.savefig(plot_filename, format='pdf', bbox_inches='tight')
         plt.close()
         print(f"\nPlot saved as {plot_filename}")
