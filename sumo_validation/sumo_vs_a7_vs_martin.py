@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import linregress
 import numpy as np
-# import argparse
 import os
 
 def read_and_sort(file_path):
@@ -50,11 +49,27 @@ def plot_correlation(ax, x, y, xlabel, ylabel, feature_name, show_stats=True):
         ax.set_ylabel(ylabel)
         ax.set_title(f'{xlabel} vs {ylabel} ({feature_name})')
 
-def main(column_name, channel, path, show_stats=True):
+    # Set equal axis ranges
+    x_min, x_max = ax.get_xlim()
+    y_min, y_max = ax.get_ylim()
+    min_val = min(x_min, y_min)
+    max_val = max(x_max, y_max)
+    ax.set_xlim(min_val, max_val)
+    ax.set_ylim(min_val, max_val)
+
+    # Add grid
+    ax.grid(True, linestyle='--', alpha=0.7)
+
+    # Add identity line (y = x)
+    min_val = min(ax.get_xlim()[0], ax.get_ylim()[0])
+    max_val = max(ax.get_xlim()[1], ax.get_ylim()[1])
+    ax.plot([min_val, max_val], [min_val, max_val], 'r--', linewidth=1)
+
+def main(column_name, channel, path_data, path_save, show_stats=True):
     # Construct file paths
-    a7_path = os.path.join(path, 'A7/artifact_removed/a7_val_artifact_removed.tsv')
-    martin_path = os.path.join(path, 'Martin/artifact_removed/martin_val_artifact_removed.tsv')
-    sumo_path = os.path.join(path, 'SUMO/artifact_removed/sumo_val_artifact_removed.tsv')
+    a7_path = os.path.join(path_data, 'A7/artifact_removed/a7_val_artifact_removed.tsv')
+    martin_path = os.path.join(path_data, 'Martin/artifact_removed/martin_val_artifact_removed.tsv')
+    sumo_path = os.path.join(path_data, 'SUMO/artifact_removed/sumo_val_artifact_removed.tsv')
 
     # Check if files exist
     for file_path in [a7_path, martin_path, sumo_path]:
@@ -99,6 +114,7 @@ def main(column_name, channel, path, show_stats=True):
     if a7_data.empty or martin_data.empty or sumo_data.empty:
         raise ValueError("One or more datasets are empty after filtering.")
 
+    # Create subplots
     fig, axes = plt.subplots(1, 3, figsize=(18, 6))
 
     # Filter out NaN pairs for each comparison
@@ -124,10 +140,13 @@ def main(column_name, channel, path, show_stats=True):
 
     plt.tight_layout()
 
-    plot_dir = os.path.join(path, 'compare_detectors', 'plots')
+    # Create 'plot' directory if it doesn't exist
+    plot_dir = os.path.join(path_save, 'plots')
     os.makedirs(plot_dir, exist_ok=True)
+
+    # Save the plot
     plot_path = os.path.join(plot_dir, f'correlation_{column_name}_{channel}.pdf')
-    plt.savefig(plot_path)
+    plt.savefig(plot_path, bbox_inches='tight')
     print(f"Plot saved to {plot_path}")
 
     plt.close()
@@ -136,15 +155,20 @@ if __name__ == "__main__":
     column_names = ['total_N2_density', 'total_N3_density', 'total_density', 'total_N2_spindle_sec',
                    'total_N3_spindle_sec', 'total_spindle_sec', 'total_N2_amp_rms_uV',
                    'total_N3_amp_rms_uV', 'total_amp_rms_uV']
-    path = '/Users/boshra/Desktop/CEAMS internship/data/validation_cohort/EDF_converted/cohort_reports'
+    path_data = '/Users/boshra/Desktop/CEAMS internship/data/validation_cohort/EDF_converted/cohort_reports'
+    path_save = '/Users/boshra/Desktop/CEAMS internship/data/validation_cohort/EDF_converted/correlation_analysis/compare_detectors'
     show_stats = True
 
-    channel = 'C4'
-    for col in column_names:
-        print(f"Processing column: {col} for channel C4")
-        main(col, channel, path, show_stats)
+    # Process for C4 channel
+    # channel = 'C4'
+    # for col in column_names:
+    #     print(f"Processing column: {col} for channel C4")
+    #     main(col, channel, path, show_stats)
 
+    # Process for C3 channel
     channel = 'C3'
     for col in column_names:
         print(f"Processing column: {col} for channel C3")
-        main(col, channel, path, show_stats)
+        main(col, channel, path_data, path_save, show_stats)
+
+
